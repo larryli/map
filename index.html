@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>地图偏移</title>
+<script src="https://ditu.google.com/maps/api/js?sensor=false"></script>
+<script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<script src="jquery.geolocation.js"></script>
+<script src="jquery.eviltransform.js"></script>
+<script src="jquery.geolocationpicker.js"></script>
+<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="jquery.geolocationpicker.css">
+<style>
+div.geolocationpicker div.geo-tool {
+-webkit-box-sizing: content-box;
+-moz-box-sizing: content-box;
+box-sizing: content-box;
+}
+</style>
+</head>
+<body>
+<nav class="navbar navbar-default" role="navigation">
+<div class="container-fluid">
+<div class="navbar-header">
+<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+<span class="sr-only">切换导航条</span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+</button>
+<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-map-marker"></span> 地图偏移</a>
+</div>
+<p class="navbar-text">WGS/GCJ-02 Transform</p>
+<p class="navbar-text navbar-right">Written by Larry Li, 2011-2014</p>
+</div><!-- /.container-fluid -->
+</nav>
+<div class="container">
+<div id="geolocationpicker" class="geolocationpicker">Geo Location Picker</div>
+<form class="form-horizontal" role="form">
+<div class="form-group">
+<label for="lng" class="col-sm-2 control-label"><u>W</u>GS 经度：</label>
+<div class="col-sm-4">
+<input id="lng" readonly="readonly" type="text" class="form-control" placeholder="WGS 经度">
+</div>
+<label for="glng" class="col-sm-2 control-label"><u>G</u>CJ-02 经度：</label>
+<div class="col-sm-4">
+<input id="glng" readonly="readonly" type="text" class="form-control" placeholder="CJ-02 经度">
+</div>
+</div>
+<div class="form-group">
+<label for="lat" class="col-sm-2 control-label"><u>W</u>GS 纬度：</label>
+<div class="col-sm-4">
+<input id="lat" readonly="readonly" type="text" class="form-control" placeholder="WGS 纬度">
+</div>
+<label for="glat" class="col-sm-2 control-label"><u>G</u>CJ-02 纬度：</label>
+<div class="col-sm-4">
+<input id="glat" readonly="readonly" type="text" class="form-control" placeholder="CJ-02 纬度">
+</div>
+</div>
+</form>
+<div class="rows">
+<div class="col-sm-6">
+<img id="roadmap" alt="22.541767,114.061332" src="https://maps.googleapis.com/maps/api/staticmap?center=22.541767,114.061332&amp;markers=color:green%7Clabel:G%7C22.541767,114.061332&amp;markers=color:red%7Clabel:W%7C22.544478468154114,114.05621433272783&amp;zoom=15&amp;size=560x240&amp;maptype=roadmap&amp;sensor=false">
+</div>
+<div class="col-sm-6">
+<img id="satellite" alt="22.544478468154114,114.05621433272783" src="https://maps.googleapis.com/maps/api/staticmap?center=22.544478468154114,114.05621433272783&amp;markers=color:green%7Clabel:W%7C22.544478468154114,114.05621433272783&amp;markers=color:red%7Clabel:G%7C22.541767,114.061332&amp;zoom=15&amp;size=560x240&amp;maptype=satellite&amp;sensor=false">
+</div>
+</div>
+</div>
+<script>
+$(function() {
+  $.geolocationpicker({zoom: 15});
+  $('#lng').change(function() {
+    data = $.eviltransform.wgs2gcj(parseFloat($('#lat').val()), parseFloat($('#lng').val()));
+    $('#glat').val(data.lat);
+    $('#glng').val(data.lng);
+    wgs = $('#lat').val() + ',' + $('#lng').val();
+    gcj = $('#glat').val() + ',' + $('#glng').val();
+    $('#roadmap').attr('alt', gcj).attr('src', 'https://maps.googleapis.com/maps/api/staticmap?center=' + gcj + '&markers=color:green%7Clabel:G%7C' + gcj + '&markers=color:red%7Clabel:W%7C' + wgs + '&zoom=15&size=560x240&maptype=roadmap&sensor=false');
+    $('#satellite').attr('alt', wgs).attr('src', 'https://maps.googleapis.com/maps/api/staticmap?center=' + wgs + '&markers=color:green%7Clabel:W%7C' + wgs + '&markers=color:red%7Clabel:G%7C' + gcj + '&zoom=15&size=560x240&maptype=satellite&sensor=false');
+  });
+});
+</script>
+</body>
+</html>
